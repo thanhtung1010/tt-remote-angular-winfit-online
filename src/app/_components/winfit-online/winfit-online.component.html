@@ -1,53 +1,103 @@
-<section class="tt-winfit-online">
-  <div class="tt-winfit-online-backdrop"></div>
-  <section class="tt-winfit-online-content">
-    <section class="tt-winfit-online-content-wrap">
-      <div class="tt-winfit-online-content-backdrop"></div>
-      <section class="tt-winfit-online-top">
+<section class="tt-wo">
+  <div class="tt-wo-backdrop"></div>
+  <section class="tt-wo-content">
+    <section class="tt-wo-content-wrap">
+      <div class="tt-wo-content-backdrop"></div>
+      <section class="tt-wo-top">
         <img loading="lazy" [src]="'logo-winfit' | TTAssetsLink:'svg'" [alt]="'logo-winfit.svg'" style="height: 50px;">
         <img loading="lazy" [src]="'logo-winwin' | TTAssetsLink:'svg'" [alt]="'logo-winwin.svg'" style="height: 50px;">
       </section>
-      <section class="tt-winfit-online-middle">
+      <section class="tt-wo-middle">
         <form nz-form [formGroup]="infoForm">
           <!-- age -->
-          <nz-form-item>
-            <nz-form-label>
-              <label class="tt-label tt-required">{{"LABEL.AGE_INPUT_WINFIT" | translate}}</label>
-            </nz-form-label>
-            <nz-form-control [nzErrorTip]="undefined" [nzValidatingTip]="undefined">
-              <input nz-input formControlName="age" [placeholder]="'PLACEHOLDER.AGE_INPUT' | translate" />
-            </nz-form-control>
-          </nz-form-item>
+          <ng-container *ngIf="infoForm.contains('age')">
+            <label class="tt-label tt-required">{{"LABEL.AGE_INPUT_WINFIT" | translate}}</label>
+            <input #input type="number" nz-input formControlName="age" [placeholder]="'PLACEHOLDER.AGE_INPUT' | translate" />
+          </ng-container>
 
           <!-- height -->
-          <!-- <nz-form-item>
+          <ng-container *ngIf="infoForm.contains('gender')">
+            <label class="tt-label tt-required">{{"GENDER.INDEX_WINFIT" | translate}}</label>
+            <nz-radio-group formControlName="gender">
+              <label nz-radio [nzValue]="true">{{"GENDER.MAN_WINFIT" | translate}}</label>
+              <label nz-radio [nzValue]="false">{{"GENDER.WOMAN_WINFIT" | translate}}</label>
+            </nz-radio-group>
+          </ng-container>
+
+          <!-- height -->
+          <ng-container *ngIf="infoForm.contains('heightIndex')">
             <label class="tt-label tt-required">{{"LABEL.HEIGHT_INPUT_WINFIT" | translate}}</label>
-            <nz-form-control [nzErrorTip]="undefined" [nzValidatingTip]="undefined">
-              <input nz-input formControlName="heightIndex" [placeholder]="'PLACEHOLDER.HEIGHT_INPUT' | translate" />
-            </nz-form-control>
-          </nz-form-item> -->
+            <input nz-input type="number" formControlName="heightIndex" [placeholder]="'PLACEHOLDER.HEIGHT_INPUT' | translate" />
+          </ng-container>
 
           <!-- weight -->
-          <!-- <nz-form-item>
+          <ng-container *ngIf="infoForm.contains('weightIndex')">
             <label class="tt-label tt-required">{{"LABEL.WEIGHT_INPUT_WINFIT" | translate}}</label>
-            <nz-form-control [nzErrorTip]="undefined" [nzValidatingTip]="undefined">
-              <input nz-input formControlName="weightIndex" [placeholder]="'PLACEHOLDER.WEIGHT_INPUT' | translate" />
-            </nz-form-control>
-          </nz-form-item> -->
+            <input nz-input type="number" formControlName="weightIndex" [placeholder]="'PLACEHOLDER.WEIGHT_INPUT' | translate" />
+          </ng-container>
         </form>
       </section>
-      <section class="tt-winfit-online-bottom">
+      <section class="tt-wo-bottom">
         <button class="tt-mr-5" nz-button nzType="primary" nzSize="default" nzShape="round" (click)="onClickCheckIndex()"
           [hidden]="false">
           {{'BUTTON.CHECK_WINFIT_INDEX' | translate}}
         </button>
-        <button nz-button nzType="primary" nzSize="default" nzShape="round" (click)="onClickSave()" [hidden]="false">
+        <!-- <button nz-button nzType="primary" nzSize="default" nzShape="round" (click)="onClickSave()" [hidden]="false">
           {{'BUTTON.SAVE_WINFIT' | translate}}
-        </button>
+        </button> -->
       </section>
     </section>
   </section>
 </section>
+
+<nz-modal [nzClassName]="'tt-wo-modal'" [(nzVisible)]="visibleIndexWinfitModal" [nzCloseIcon]="''">
+  <ng-container *nzModalTitle></ng-container>
+
+  <ng-container *nzModalContent>
+    <section class="tt-wo-modal-content">
+      <section class="tt-wo-modal-section">
+        <label class="tt-label">DIỄN GIẢI TỶ LỆ BMR</label>
+        <nz-table nzShowPagination]="false" [nzSize]="'small'">
+          <!-- (nzQueryParams)="onSearchTableParams($event)"> -->
+          <thead>
+            <tr>
+              <!-- <th>
+                {{ header.title | translate }}
+              </th>
+              <th>
+                {{ header.title | translate }}
+              </th>
+              <th>
+                {{ header.title | translate }}
+              </th>
+              <th>
+                {{ header.title | translate }}
+              </th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <!-- <td>
+                {{ item.full_name }}
+              </td>
+              <td>
+                {{ item.email }}
+              </td>
+              <td>
+                {{ item.phone_number }}
+              </td>
+              <td>
+                {{ item.phone_number }}
+              </td> -->
+            </tr>
+          </tbody>
+        </nz-table>
+      </section>
+    </section>
+  </ng-container>
+
+  <ng-container *nzModalFooter></ng-container>
+</nz-modal>
 
 <ng-template #errorTemp let-control>
   <ng-container *ngIf="control?.errors?.required">

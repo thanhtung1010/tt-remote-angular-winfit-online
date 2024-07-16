@@ -5,7 +5,7 @@ module.exports = withModuleFederationPlugin({
   name: '@tt-winfit-online',
 
   exposes: {
-    './winfit-online': './src/app/_components/winfit-online/winfit-online.component.ts',
+    './module': './src/app/app.module.ts',
   },
 
   shared: {
