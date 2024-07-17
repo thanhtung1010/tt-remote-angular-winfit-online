@@ -5,13 +5,56 @@ import {
   AbstractControl,
   ValidationErrors,
   FormControl,
+  Validators,
 } from '@angular/forms';
-import { UserService } from 'tt-library-angular-porfolio';
-import { BaseIndexWinfitModel } from '../../_models';
+import {
+  IBaseBodyFatData,
+  IBaseMBIData,
+  IBaseMBRData,
+  IBaseSkeletalMusclesData,
+  IBaseVisceralFatData,
+  UserService,
+  WinfitOnlineService,
+  BaseIndexWinfitModel,
+  CommonService,
+  ROUTE,
+  Helpers,
+  IFirestoreCustomerWinfitOnline,
+} from 'tt-library-angular-porfolio';
+import { AssetsLink } from 'tt-library-angular-porfolio';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { TranslateModule } from '@ngx-translate/core';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { BMRPerAgePipe } from '../../_pipes';
 
 @Component({
   selector: 'tt-winfit-online',
   templateUrl: './winfit-online.component.html',
+  standalone: true,
+  imports: [
+    BMRPerAgePipe,
+    AssetsLink,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    NzFormModule,
+    NzGridModule,
+    NzInputModule,
+    NzButtonModule,
+    NzRadioModule,
+    NzModalModule,
+    NzTableModule,
+    NzDescriptionsModule,
+  ]
 })
 export class WinfitOnlineComponent implements OnInit {
   infoForm!: FormGroup<{
@@ -20,29 +63,229 @@ export class WinfitOnlineComponent implements OnInit {
     heightIndex: FormControl<number | null>;
     weightIndex: FormControl<number | null>;
   }>;
+  customeroForm!: FormGroup<{
+    name: FormControl<string | null>;
+    email: FormControl<string | null>;
+    phoneNumber: FormControl<string | null>;
+  }>;
   loading = {
     checkIndexWinfit: false,
-  }
+    saveWinfitInfo: false,
+  };
+  indexWinfit: BaseIndexWinfitModel = new BaseIndexWinfitModel(null);
 
-  baseIndexWinfit: BaseIndexWinfitModel = new BaseIndexWinfitModel(null);
+  baseMBRData: IBaseMBRData[] = [
+    {
+      ageFrom: 10,
+      ageTo: 11,
+      bmr: NaN,
+      manBMR: 37.4,
+      womanBMR: 34.8,
+    },
+    {
+      ageFrom: 12,
+      ageTo: 14,
+      bmr: NaN,
+      manBMR: 31,
+      womanBMR: 29.6,
+    },
+    {
+      ageFrom: 15,
+      ageTo: 17,
+      bmr: NaN,
+      manBMR: 27,
+      womanBMR: 25.3,
+    },
+    {
+      ageFrom: 18,
+      ageTo: 29,
+      bmr: NaN,
+      manBMR: 24,
+      womanBMR: 22.1,
+    },
+    {
+      ageFrom: 30,
+      ageTo: 49,
+      bmr: NaN,
+      manBMR: 22.3,
+      womanBMR: 21.7,
+    },
+    {
+      ageFrom: 50,
+      ageTo: 69,
+      bmr: NaN,
+      manBMR: 21.5,
+      womanBMR: 20.7,
+    },
+    {
+      ageFrom: 70,
+      ageTo: NaN,
+      bmr: NaN,
+      manBMR: 21.5,
+      womanBMR: 20.7,
+    },
+  ];
+  baseMBIData: IBaseMBIData[] = [
+    {
+      bmiFrom: 2.5,
+      bmiTo: 18.4,
+      bmi: NaN,
+      type: 'TABLE.FITNESS',
+    },
+    {
+      bmiFrom: 18.5,
+      bmiTo: 22.9,
+      bmi: NaN,
+      type: 'TABLE.BALANCE',
+    },
+    {
+      bmiFrom: 23,
+      bmiTo: 24.9,
+      bmi: NaN,
+      type: 'TABLE.OVERWEIGHT',
+    },
+    {
+      bmiFrom: 25,
+      bmiTo: 29.9,
+      bmi: NaN,
+      type: 'TABLE.OBESITY',
+    },
+    {
+      bmiFrom: 20,
+      bmiTo: 50,
+      bmi: NaN,
+      type: 'TABLE.DANGEROUS_OBESITY',
+    },
+  ];
+  baseBodyFatData: IBaseBodyFatData[] = [
+    {
+      indexForManFrom: 3,
+      indexForManTo: 10,
+      indexForWomanFrom: 12,
+      indexForWomanTo: 18,
+      type: 'TABLE.FITNESS',
+    },
+    {
+      indexForManFrom: 10,
+      indexForManTo: 20,
+      indexForWomanFrom: 18,
+      indexForWomanTo: 28,
+      type: 'TABLE.BALANCE',
+    },
+    {
+      indexForManFrom: 20,
+      indexForManTo: 25,
+      indexForWomanFrom: 28,
+      indexForWomanTo: 32,
+      type: 'TABLE.HIGH',
+    },
+    {
+      indexForManFrom: 25,
+      indexForManTo: NaN,
+      indexForWomanFrom: 32,
+      indexForWomanTo: NaN,
+      type: 'TABLE.VERY_HIGH',
+    },
+  ];
+  baseVisceralFatData: IBaseVisceralFatData[] = [
+    {
+      levelVisceralFatFrom: 1,
+      levelVisceralFatTo: 3,
+      type: 'TABLE.GOOD',
+    },
+    {
+      levelVisceralFatFrom: 3,
+      levelVisceralFatTo: 9,
+      type: 'TABLE.HIGH',
+    },
+    {
+      levelVisceralFatFrom: 10,
+      levelVisceralFatTo: 14,
+      type: 'TABLE.DANGER',
+    },
+    {
+      levelVisceralFatFrom: 15,
+      levelVisceralFatTo: 30,
+      type: 'TABLE.VERY_DANGER',
+    },
+  ];
+  baseSkeletalMusclesData: IBaseSkeletalMusclesData[] = [
+    {
+      for: 'TABLE.WOMAN',
+      lowFrom: 5,
+      lowTo: 26,
+      normalFrom: 26,
+      normalTo: 29,
+      goodFrom: 29,
+      goodTo: 31,
+      veryGoodFrom: 31,
+      veryGoodTo: 60,
+    },
+    {
+      for: 'TABLE.MAN',
+      lowFrom: 5,
+      lowTo: 33,
+      normalFrom: 33,
+      normalTo: 37,
+      goodFrom: 37,
+      goodTo: 40,
+      veryGoodFrom: 40,
+      veryGoodTo: 60,
+    },
+  ];
+
   visibleIndexWinfitModal: boolean = false;
-
+  visibleWarningAuthModal: boolean = false;
+  visibleInputCustomerModal: boolean = false;
+  checkingErrorForm: boolean = false;
+  checkingErrorCustomerForm: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
+    private winfitOnlineService: WinfitOnlineService,
+    private commonService: CommonService,
   ) { }
 
   ngOnInit() {
     this.initForm();
+
+    this.infoForm.valueChanges.subscribe(resp => {
+      this.checkingErrorForm = false;
+    });
+    this.winfitOnlineService.baseIndexWinfit$.subscribe(resp => {
+      this.indexWinfit = resp;
+    });
+    const params = Helpers.convertParamsToObject(Helpers.getParamString());
+
+    if (params && params['backFromLogin'] && params.backFromLogin === 'true') {
+      this.onToogleVisibleInputCustomerModal(true);
+    }
+    this.customeroForm.valueChanges.subscribe(resp => {
+      this.checkingErrorCustomerForm = false;
+    });
   }
 
   initForm() {
+    // this.infoForm = this.fb.group({
+    //   age: [0, [this.numberValidate]],
+    //   gender: [null as any, [this.numberValidate]],
+    //   heightIndex: [0, [this.numberValidate]],
+    //   weightIndex: [0, [this.numberValidate]],
+    // });
     this.infoForm = this.fb.group({
-      age: [0, [this.numberValidate]],
-      gender: [null as any, [this.numberValidate]],
-      heightIndex: [0, [this.numberValidate]],
-      weightIndex: [0, [this.numberValidate]],
+      age: [25, [this.numberValidate]],
+      gender: [true, [this.numberValidate]],
+      heightIndex: [169, [this.numberValidate]],
+      weightIndex: [60, [this.numberValidate]],
+    });
+  }
+
+  initCustomerForm() {
+    this.customeroForm = this.fb.group({
+      name: ['', [Validators.required]],
+      email: ['', []],
+      phoneNumber: ['', []],
     });
   }
 
@@ -71,114 +314,89 @@ export class WinfitOnlineComponent implements OnInit {
   }
 
   onClickSave() {
+    if (this.userService.user.init) {
+      this.onToogleVisibleInputCustomerModal(true);
+    } else {
+      this.onToogleVisibleWarningAuthModal(true);
+    }
+  }
+
+  onClickSaveWinfit() {
+    this.loading.saveWinfitInfo = true;
+    this.checkingErrorCustomerForm = true;
+
+    if (!this.customeroForm.valid) {
+      this.loading.saveWinfitInfo = false;
+      return;
+    }
+
+    let _value = this.customeroForm.value;
+    const customerInfo: IFirestoreCustomerWinfitOnline = {
+      userID: this.userService._uuid,
+      customerName: _value.name || '',
+      customerEmail: _value.email || '',
+      customerPhoneNumber: _value.phoneNumber || '',
+    };
+
+    this.winfitOnlineService.saveWinfit(customerInfo).subscribe(resp => {
+      if (resp) {
+        this.commonService.showSuccess();
+      } else {
+        this.commonService.showError();
+      }
+      this.loading.saveWinfitInfo = false;
+    });
+  }
+
+  onClickCheckIndex() {
+    this.loading.checkIndexWinfit = true;
+    this.checkingErrorForm = true;
     // const controls = this.infoForm.controls;
 
     // for (const field in controls) {
     //   const control = (controls as any)[field];
     //   if (control) {
     //     control.markAsDirty();
-    //     control.updateValueAndValidity();
+    //     control.updateValueAndValidity({emitEvent: false});
     //   }
     // }
-
-    // if (!this.infoForm.valid) {
-    //   return;
-    // }
-
-    // if (this.userService.user.init) {}
-  }
-
-  onClickCheckIndex() {
-    this.loading.checkIndexWinfit = true;
-    const controls = this.infoForm.controls;
-
-    for (const field in controls) {
-      const control = (controls as any)[field];
-      if (control) {
-        control.markAsDirty();
-        control.updateValueAndValidity();
-      }
-    }
 
     if (!this.infoForm.valid) {
       return;
     }
 
     let _value: any = this.infoForm.value;
-    this.calcBMI(_value);
-    this.calcBMR(_value);
-    this.calcWaterNeeded(_value);
-    this.baseIndexWinfit = new BaseIndexWinfitModel(this.baseIndexWinfit);
+    this.winfitOnlineService.calcBMI(_value);
+    this.winfitOnlineService.calcBMR(_value);
+    this.winfitOnlineService.calcWaterNeeded(_value);
+    this.winfitOnlineService.baseIndexWinfit = _value;
 
     const _timeout = setTimeout(() => {
       this.loading.checkIndexWinfit = false;
+      this.checkingErrorForm = false;
       this.onToogleVisibleIndexWinfitModal(true);
       clearTimeout(_timeout);
     }, 500);
   }
 
-  calcBMR(baseInfor: IBaseInfor) {
-    let harrisBenedict: number = NaN;
-    let mifflinStJeor: number = NaN;
-    let katchMcArdle: number = NaN;
-
-    if (baseInfor.gender) {
-      harrisBenedict = 66 + (13.7 * baseInfor.weightIndex) + (5 * baseInfor.heightIndex) + (6.8 * baseInfor.age);
-      mifflinStJeor = (10 * baseInfor.weightIndex) + (6.25 * baseInfor.heightIndex) - (5 * baseInfor.age) + 5;
-    } else {
-      harrisBenedict = 655 + (9.6 * baseInfor.weightIndex) + (1.8 * baseInfor.heightIndex) + (4.7 * baseInfor.age);
-      mifflinStJeor = (10 * baseInfor.weightIndex) + (6.25 * baseInfor.heightIndex) - (5 * baseInfor.age) - 161;
-    }
-    if (baseInfor.lbm) {
-      katchMcArdle = 370 + (21.6 * baseInfor.lbm);
-    }
-    this.baseIndexWinfit.bmr = {
-      harrisBenedict: +harrisBenedict.toFixed(2),
-      mifflinStJeor: +mifflinStJeor.toFixed(2),
-      katchMcArdle
-    };
-  }
-
-  calcBMI(baseInfor: IBaseInfor) {
-    const height = baseInfor.heightIndex / 100;
-
-    const bmi: number = baseInfor.weightIndex / Math.pow(height, 2);
-    this.baseIndexWinfit.bmi = bmi;
-  }
-
-  calcWaterNeeded(baseInfor: IBaseInfor) {
-    const waterNeeded: number = baseInfor.weightIndex * 0.03;
-    this.baseIndexWinfit.waterNeeded = waterNeeded;
-  }
-
   onToogleVisibleIndexWinfitModal(visible: boolean) {
     this.visibleIndexWinfitModal = visible;
   }
-}
 
-export interface IBaseInfor {
-  age: number;
-  gender: boolean;
-  heightIndex: number;
-  weightIndex: number;
-  lbm?: number;
-}
+  onToogleVisibleWarningAuthModal(visible: boolean) {
+    this.visibleWarningAuthModal = visible;
+  }
 
-export interface ICalcIndexWinfit {
-  age: number;
-  gender: boolean;
-  heightIndex: number;
-  weightIndex: number;
-  bmr?: IBaseBMR;
-  bmi?: number;
-  waterNeeded?: number;
-  fullName?: string;
-  email?: string;
-  phoneNumber?: string;
-}
+  onToogleVisibleInputCustomerModal(visible: boolean) {
+    if (visible) {
+      this.initCustomerForm();
+    } else {
+      this.customeroForm.reset();
+    }
+    this.visibleInputCustomerModal = visible;
+  }
 
-export interface IBaseBMR {
-  harrisBenedict: number;
-  mifflinStJeor: number;
-  katchMcArdle?: number;
+  goToLogin() {
+    this.commonService.gotoURL(`${ROUTE.AUTH}/${ROUTE.AUTH_LOGIN}`);
+  }
 }

@@ -12,7 +12,7 @@
           <!-- age -->
           <ng-container *ngIf="infoForm.contains('age')">
             <label class="tt-label tt-required">{{"LABEL.AGE_INPUT_WINFIT" | translate}}</label>
-            <input #input type="number" nz-input formControlName="age" [placeholder]="'PLACEHOLDER.AGE_INPUT' | translate" />
+            <input nz-input type="number" formControlName="age" [placeholder]="'PLACEHOLDER.AGE_INPUT' | translate" />
           </ng-container>
 
           <!-- height -->
@@ -38,13 +38,17 @@
         </form>
       </section>
       <section class="tt-wo-bottom">
-        <button class="tt-mr-5" nz-button nzType="primary" nzSize="default" nzShape="round" (click)="onClickCheckIndex()"
-          [hidden]="false">
-          {{'BUTTON.CHECK_WINFIT_INDEX' | translate}}
-        </button>
-        <!-- <button nz-button nzType="primary" nzSize="default" nzShape="round" (click)="onClickSave()" [hidden]="false">
-          {{'BUTTON.SAVE_WINFIT' | translate}}
-        </button> -->
+        <div>
+          <ng-container *ngIf="checkingErrorForm && !infoForm.valid">
+            <p class="tt-align-right tt-red" style="font-size: 16px;">{{'MESSAGE.WINFIT_REQUIRED' | translate}}</p>
+          </ng-container>
+          <button class="tt-mr-5 tt-mt-10" nz-button nzType="primary" nzSize="default" nzShape="round" (click)="onClickCheckIndex()">
+            {{'BUTTON.CHECK_WINFIT_INDEX' | translate}}
+          </button>
+          <!-- <button nz-button nzType="primary" nzSize="default" nzShape="round" (click)="onClickSave()" [hidden]="false">
+            {{'BUTTON.SAVE_WINFIT' | translate}}
+          </button> -->
+        </div>
       </section>
     </section>
   </section>
@@ -55,47 +59,327 @@
 
   <ng-container *nzModalContent>
     <section class="tt-wo-modal-content">
-      <section class="tt-wo-modal-section">
-        <label class="tt-label">DIỄN GIẢI TỶ LỆ BMR</label>
-        <nz-table nzShowPagination]="false" [nzSize]="'small'">
-          <!-- (nzQueryParams)="onSearchTableParams($event)"> -->
+      <!-- base info -->
+       <section class="tt-wo-modal-section">
+        <label class="tt-wo-modal-section-head tt-label">{{('TABLE.BASIC_INFO_WINFIT' | translate) | uppercase}}</label>
+        <div class="tt-wo-basic-info">
+          <div class="tt-wo-basic-info-item">
+            <label class="tt-label">{{'TABLE.ABOUT_AGE' | translate}}:</label>
+            <p>{{indexWinfit.age}}</p>
+          </div>
+
+          <div class="tt-wo-basic-info-item">
+            <label class="tt-label">{{'GENDER.INDEX_WINFIT' | translate}}:</label>
+            <p>{{(indexWinfit.gender ? 'GENDER.MAN_WINFIT' : 'GENDER.WOMAN_WINFIT') | translate}}</p>
+          </div>
+
+          <div class="tt-wo-basic-info-item">
+            <label class="tt-label">{{'TABLE.HEIGHT_WINFIT' | translate}}:</label>
+            <p>{{indexWinfit.heightIndex}}</p>
+          </div>
+
+          <div class="tt-wo-basic-info-item">
+            <label class="tt-label">{{'TABLE.WEIGHT_WINFIT' | translate}}:</label>
+            <p>{{indexWinfit.weightIndex}}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BMR -->
+      <section class="tt-wo-modal-section tt-wo-modal-section-bmr">
+        <label class="tt-wo-modal-section-head tt-label">{{('TABLE.EXPLAIN_INDEX_BMR' | translate) | uppercase}}</label>
+        <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseMBRData">
           <thead>
             <tr>
-              <!-- <th>
-                {{ header.title | translate }}
+              <th>
+                {{ ('TABLE.BMR' | translate) | uppercase }}
               </th>
               <th>
-                {{ header.title | translate }}
+                {{ ('TABLE.ABOUT_AGE' | translate) | uppercase }}
               </th>
               <th>
-                {{ header.title | translate }}
+                {{ ('TABLE.INDEX_BMR' | translate) | uppercase }}
               </th>
               <th>
-                {{ header.title | translate }}
-              </th> -->
+                {{ ('TABLE.MAN' | translate) | uppercase }}
+              </th>
+              <th>
+                {{ ('TABLE.WOMAN' | translate) | uppercase }}
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <!-- <td>
-                {{ item.full_name }}
-              </td>
-              <td>
-                {{ item.email }}
-              </td>
-              <td>
-                {{ item.phone_number }}
-              </td>
-              <td>
-                {{ item.phone_number }}
-              </td> -->
-            </tr>
+            <ng-container *ngFor="let bmr of baseMBRData; let index = index">
+              <tr>
+                <ng-container *ngIf="index === 0">
+                  <td [rowSpan]="7">
+                    <p>{{indexWinfit.bmr.mifflinStJeor}}</p>
+                  </td>
+                </ng-container>
+                <td [ngClass]="{'tt-bold': indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo}">
+                  <ng-container *ngIf="bmr.ageTo; else emptyAgeTo">
+                    {{bmr.ageFrom + ' - ' + bmr.ageTo}}
+                  </ng-container>
+
+                  <ng-template #emptyAgeTo>
+                    {{'>= ' + bmr.ageFrom}}
+                  </ng-template>
+                </td>
+                <td [ngClass]="{'tt-bold': indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo}">
+                  <ng-container *ngIf="indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo">
+                    <div [innerHTML]="indexWinfit | TTBMRPerAge"></div>
+                  </ng-container>
+                </td>
+                <td [ngClass]="{'tt-bold': indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo}">
+                  {{bmr.manBMR}}
+                </td>
+                <td [ngClass]="{'tt-bold': indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo}">
+                  {{bmr.womanBMR}}
+                </td>
+              </tr>
+            </ng-container>
           </tbody>
         </nz-table>
       </section>
+
+      <!-- BMI -->
+      <section class="tt-wo-modal-section tt-wo-modal-section-bmi">
+        <label class="tt-wo-modal-section-head tt-label">{{('TABLE.INDEX_BMI' | translate) | uppercase}}</label>
+        <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseMBRData">
+          <thead>
+            <tr>
+              <th>
+                {{ ('TABLE.BMI' | translate) | uppercase }}
+              </th>
+              <th>
+                {{ ('TABLE.EXPLAIN_BMI' | translate) | uppercase }}
+              </th>
+              <th>
+                {{ ('TABLE.TYPE' | translate) | uppercase }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let bmi of baseMBIData; let index = index">
+              <tr>
+                <ng-container *ngIf="index === 0">
+                  <td [rowSpan]="5">
+                    <p>{{indexWinfit.bmi}}</p>
+                  </td>
+                </ng-container>
+                <td [ngClass]="{'tt-bold': indexWinfit.bmi >= bmi.bmiFrom && indexWinfit.bmi <= bmi.bmi}">
+                  {{bmi.bmiFrom + ' - ' + bmi.bmiTo}}
+                </td>
+                <td [ngClass]="{'tt-bold': indexWinfit.bmi >= bmi.bmiFrom && indexWinfit.bmi <= bmi.bmi}">
+                  {{bmi.type | translate}}
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </nz-table>
+      </section>
+
+      <!-- body fat -->
+      <section class="tt-wo-modal-section tt-wo-modal-section-bodyfat">
+        <label class="tt-wo-modal-section-head tt-label">{{('TABLE.INDEX_BODY_FAT' | translate) | uppercase}}</label>
+        <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseMBRData">
+          <thead>
+            <tr>
+              <th>
+                {{ ('TABLE.MAN' | translate) | uppercase }}
+              </th>
+              <th>
+                {{ ('TABLE.WOMAN' | translate) | uppercase }}
+              </th>
+              <th>
+                {{ ('TABLE.TYPE' | translate) | uppercase }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let bdf of baseBodyFatData; let index = index">
+              <tr>
+                <td>
+                  <ng-container *ngIf="bdf.indexForManTo; else emptyManTo">
+                    {{bdf.indexForManFrom + ' - ' + bdf.indexForManTo}}
+                  </ng-container>
+
+                  <ng-template #emptyManTo>
+                    {{'>= ' + bdf.indexForManFrom}}
+                  </ng-template>
+                </td>
+                <td>
+                  <ng-container *ngIf="bdf.indexForWomanTo; else emptyManTo">
+                    {{bdf.indexForWomanFrom + ' - ' + bdf.indexForWomanTo}}
+                  </ng-container>
+
+                  <ng-template #emptyManTo>
+                    {{'>= ' + bdf.indexForWomanFrom}}
+                  </ng-template>
+                </td>
+                <td>
+                  {{bdf.type | translate}}
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </nz-table>
+      </section>
+
+      <!-- visceral fat -->
+      <section class="tt-wo-modal-section tt-wo-modal-section-visceralfat">
+        <label class="tt-wo-modal-section-head tt-label">{{('TABLE.INDEX_VISCERAL_FAT' | translate) | uppercase}}</label>
+        <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseMBRData">
+          <thead>
+            <tr>
+              <th>
+                {{ ('TABLE.VISCERAL_FAT_LEVEL' | translate) | uppercase }}
+              </th>
+              <th>
+                {{ ('TABLE.TYPE' | translate) | uppercase }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let bvf of baseVisceralFatData; let index = index">
+              <tr>
+                <td>
+                  <ng-container *ngIf="bvf.levelVisceralFatTo; else emptyManTo">
+                    {{bvf.levelVisceralFatFrom + ' - ' + bvf.levelVisceralFatTo}}
+                  </ng-container>
+
+                  <ng-template #emptyManTo>
+                    {{'>= ' + bvf.levelVisceralFatFrom}}
+                  </ng-template>
+                </td>
+                <td>
+                  {{bvf.type | translate}}
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </nz-table>
+      </section>
+
+      <!-- skeletal muscles -->
+      <section class="tt-wo-modal-section tt-wo-modal-section-skeletalmescles">
+        <label class="tt-label">{{('TABLE.INDEX_SKELETAL_MUSCLES' | translate) | uppercase}}</label>
+        <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseMBRData">
+          <thead>
+            <tr>
+              <th></th>
+              <th>
+                {{ ('TABLE.LOW' | translate) | uppercase }}
+              </th>
+              <th>
+                {{ ('TABLE.NORMAL' | translate) | uppercase }}
+              </th>
+              <th>
+                {{ ('TABLE.GOOD' | translate) | uppercase }}
+              </th>
+              <th>
+                {{ ('TABLE.VERY_GOOD' | translate) | uppercase }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let bsm of baseSkeletalMusclesData; let index = index">
+              <tr>
+                <td>
+                  {{bsm.for | translate}}
+                </td>
+                <td>
+                  {{bsm.lowFrom + ' - ' + bsm.lowTo}}
+                </td>
+                <td>
+                  {{bsm.normalFrom + ' - ' + bsm.normalTo}}
+                </td>
+                <td>
+                  {{bsm.goodFrom + ' - ' + bsm.goodTo}}
+                </td>
+                <td>
+                  {{bsm.veryGoodFrom + ' - ' + bsm.veryGoodTo}}
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </nz-table>
+      </section>
+
+      <!-- fotter -->
+       <section class="tt-wo-modal-section tt-wo-modal-section-footer">
+          <button nz-button nzType="default" nzSize="default" nzShape="round" (click)="onToogleVisibleIndexWinfitModal(false)">
+            {{'BUTTON.CANCEL_WINFIT' | translate}}
+          </button>
+          <button nz-button nzType="primary" nzSize="default" nzShape="round" (click)="onClickSave()">
+            {{'BUTTON.SAVE_WINFIT' | translate}}
+          </button>
+       </section>
     </section>
   </ng-container>
 
+  <ng-container *nzModalFooter></ng-container>
+</nz-modal>
+
+<nz-modal [nzClassName]="'tt-wo-modal'" [(nzVisible)]="visibleWarningAuthModal" [nzCloseIcon]="''">
+  <ng-container *nzModalHeader></ng-container>
+  <ng-container *nzModalContent>
+    <section class="tt-wo-modal-content">
+      <section class="tt-wo-modal-section">
+        <p class="tt-title tt-bold tt-koho">{{'MESSAGE.LOGIN_BEFORE_SAVE' | translate}}</p>
+      </section>
+
+      <!-- fotter -->
+       <section class="tt-wo-modal-section tt-wo-modal-section-footer">
+          <button nz-button nzType="default" nzSize="default" nzShape="round" (click)="onToogleVisibleWarningAuthModal(false)">
+            {{'BUTTON.CANCEL_WINFIT' | translate}}
+          </button>
+          <button nz-button nzType="primary" nzSize="default" nzShape="round" (click)="goToLogin()">
+            {{'BUTTON.LOGIN_WINFIT' | translate}}
+          </button>
+       </section>
+      </section>
+    </ng-container>
+  <ng-container *nzModalFooter></ng-container>
+</nz-modal>
+
+<nz-modal [nzClassName]="'tt-wo-modal'" [(nzVisible)]="visibleInputCustomerModal" [nzCloseIcon]="''">
+  <ng-container *nzModalHeader></ng-container>
+  <ng-container *nzModalContent>
+    <section class="tt-wo-modal-content">
+      <section class="tt-wo-modal-section">
+        <form nz-form [formGroup]="customeroForm">
+          <!-- name -->
+          <ng-container *ngIf="customeroForm.contains('name')">
+            <label class="tt-label tt-required">{{"LABEL.CUSTOMER_NAME_INPUT_WINFIT" | translate}}</label>
+            <input nz-input formControlName="name" [placeholder]="'PLACEHOLDER.CUSTOMER_NAME_INPUT_WINFIT' | translate" />
+          </ng-container>
+
+          <!-- email -->
+          <ng-container *ngIf="customeroForm.contains('email')">
+            <label class="tt-label">{{"LABEL.CUSTOMER_EMAIL_INPUT_WINFIT" | translate}}</label>
+            <input nz-input formControlName="email" [placeholder]="'PLACEHOLDER.CUSTOMER_EMAIL_INPUT_WINFIT' | translate" />
+          </ng-container>
+
+          <!-- phone number -->
+          <ng-container *ngIf="customeroForm.contains('phoneNumber')">
+            <label class="tt-label">{{"LABEL.CUSTOMER_PHONE_NUMBER_INPUT_WINFIT" | translate}}</label>
+            <input nz-input type="number" formControlName="phoneNumber" [placeholder]="'PLACEHOLDER.CUSTOMER_PHONE_NUMBER_INPUT_WINFIT' | translate" />
+          </ng-container>
+        </form>
+      </section>
+
+      <!-- fotter -->
+       <section class="tt-wo-modal-section tt-wo-modal-section-footer">
+          <button nz-button nzType="default" nzSize="default" nzShape="round" (click)="onToogleVisibleInputCustomerModal(false)">
+            {{'BUTTON.CANCEL_WINFIT' | translate}}
+          </button>
+          <button nz-button nzType="primary" nzSize="default" nzShape="round" (click)="onClickSaveWinfit()">
+            {{'BUTTON.SAVE_WINFIT' | translate}}
+          </button>
+       </section>
+      </section>
+    </ng-container>
   <ng-container *nzModalFooter></ng-container>
 </nz-modal>
 
