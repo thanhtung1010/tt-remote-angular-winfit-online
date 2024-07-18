@@ -82,6 +82,11 @@
             <label class="tt-label">{{'TABLE.WEIGHT_WINFIT' | translate}}:</label>
             <p>{{indexWinfit.weightIndex}}</p>
           </div>
+
+          <div class="tt-wo-basic-info-item">
+            <label class="tt-label">{{'TABLE.WATER_NEEDED_WINFIT' | translate}}:</label>
+            <p>{{indexWinfit.waterNeeded + ' ' + ('TABLE.WATER_WINFIT' | translate)}}</p>
+          </div>
         </div>
       </section>
 
@@ -352,19 +357,19 @@
           <!-- name -->
           <ng-container *ngIf="customeroForm.contains('name')">
             <label class="tt-label tt-required">{{"LABEL.CUSTOMER_NAME_INPUT_WINFIT" | translate}}</label>
-            <input nz-input formControlName="name" [placeholder]="'PLACEHOLDER.CUSTOMER_NAME_INPUT_WINFIT' | translate" />
+            <input class="tt-mb-20" nz-input formControlName="name" [placeholder]="'PLACEHOLDER.CUSTOMER_NAME_INPUT_WINFIT' | translate" />
           </ng-container>
 
           <!-- email -->
           <ng-container *ngIf="customeroForm.contains('email')">
             <label class="tt-label">{{"LABEL.CUSTOMER_EMAIL_INPUT_WINFIT" | translate}}</label>
-            <input nz-input formControlName="email" [placeholder]="'PLACEHOLDER.CUSTOMER_EMAIL_INPUT_WINFIT' | translate" />
+            <input class="tt-mb-20" nz-input formControlName="email" [placeholder]="'PLACEHOLDER.CUSTOMER_EMAIL_INPUT_WINFIT' | translate" />
           </ng-container>
 
           <!-- phone number -->
           <ng-container *ngIf="customeroForm.contains('phoneNumber')">
             <label class="tt-label">{{"LABEL.CUSTOMER_PHONE_NUMBER_INPUT_WINFIT" | translate}}</label>
-            <input nz-input type="number" formControlName="phoneNumber" [placeholder]="'PLACEHOLDER.CUSTOMER_PHONE_NUMBER_INPUT_WINFIT' | translate" />
+            <input class="tt-mb-20" nz-input type="number" formControlName="phoneNumber" [placeholder]="'PLACEHOLDER.CUSTOMER_PHONE_NUMBER_INPUT_WINFIT' | translate" />
           </ng-container>
         </form>
       </section>

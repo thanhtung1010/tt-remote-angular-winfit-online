@@ -261,24 +261,25 @@ export class WinfitOnlineComponent implements OnInit {
     if (params && params['backFromLogin'] && params.backFromLogin === 'true') {
       this.onToogleVisibleInputCustomerModal(true);
     }
-    this.customeroForm.valueChanges.subscribe(resp => {
-      this.checkingErrorCustomerForm = false;
-    });
+
+    if (this.userService.user.init) {
+      this.winfitOnlineService.setUserInfo = this.userService.user;
+    }
   }
 
   initForm() {
-    // this.infoForm = this.fb.group({
-    //   age: [0, [this.numberValidate]],
-    //   gender: [null as any, [this.numberValidate]],
-    //   heightIndex: [0, [this.numberValidate]],
-    //   weightIndex: [0, [this.numberValidate]],
-    // });
     this.infoForm = this.fb.group({
-      age: [25, [this.numberValidate]],
-      gender: [true, [this.numberValidate]],
-      heightIndex: [169, [this.numberValidate]],
-      weightIndex: [60, [this.numberValidate]],
+      age: [null as any, [this.numberValidate]],
+      gender: [null as any, [this.numberValidate]],
+      heightIndex: [null as any, [this.numberValidate]],
+      weightIndex: [null as any, [this.numberValidate]],
     });
+    // this.infoForm = this.fb.group({
+    //   age: [25, [this.numberValidate]],
+    //   gender: [true, [this.numberValidate]],
+    //   heightIndex: [169, [this.numberValidate]],
+    //   weightIndex: [60, [this.numberValidate]],
+    // });
   }
 
   initCustomerForm() {
@@ -335,11 +336,15 @@ export class WinfitOnlineComponent implements OnInit {
       userID: this.userService._uuid,
       customerName: _value.name || '',
       customerEmail: _value.email || '',
-      customerPhoneNumber: _value.phoneNumber || '',
+      customerPhoneNumber: '+84' + (_value.phoneNumber || ''),
     };
 
     this.winfitOnlineService.saveWinfit(customerInfo).subscribe(resp => {
       if (resp) {
+        this.onToogleVisibleIndexWinfitModal(false);
+        this.onToogleVisibleInputCustomerModal(false);
+        this.infoForm.reset();
+        this.customeroForm.reset();
         this.commonService.showSuccess();
       } else {
         this.commonService.showError();
