@@ -109,18 +109,18 @@ export class WinfitOnlineComponent implements OnInit {
   }
 
   initForm() {
-    // this.infoForm = this.fb.group({
-    //   age: [null as any, [this.numberValidate]],
-    //   gender: [null as any, [this.numberValidate]],
-    //   heightIndex: [null as any, [this.numberValidate]],
-    //   weightIndex: [null as any, [this.numberValidate]],
-    // });
     this.infoForm = this.fb.group({
-      age: [25, [this.numberValidate]],
-      gender: [true, [this.numberValidate]],
-      heightIndex: [169, [this.numberValidate]],
-      weightIndex: [60, [this.numberValidate]],
+      age: [null as any, [this.numberValidate]],
+      gender: [null as any, [this.numberValidate]],
+      heightIndex: [null as any, [this.numberValidate]],
+      weightIndex: [null as any, [this.numberValidate]],
     });
+    // this.infoForm = this.fb.group({
+    //   age: [25, [this.numberValidate]],
+    //   gender: [true, [this.numberValidate]],
+    //   heightIndex: [169, [this.numberValidate]],
+    //   weightIndex: [60, [this.numberValidate]],
+    // });
   }
 
   initCustomerForm() {
