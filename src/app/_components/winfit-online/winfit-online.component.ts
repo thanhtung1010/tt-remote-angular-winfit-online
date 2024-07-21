@@ -73,166 +73,7 @@ export class WinfitOnlineComponent implements OnInit {
     saveWinfitInfo: false,
   };
   indexWinfit: BaseIndexWinfitModel = new BaseIndexWinfitModel(null);
-
-  baseMBRData: IBaseMBRData[] = [
-    {
-      ageFrom: 10,
-      ageTo: 11,
-      bmr: NaN,
-      manBMR: 37.4,
-      womanBMR: 34.8,
-    },
-    {
-      ageFrom: 12,
-      ageTo: 14,
-      bmr: NaN,
-      manBMR: 31,
-      womanBMR: 29.6,
-    },
-    {
-      ageFrom: 15,
-      ageTo: 17,
-      bmr: NaN,
-      manBMR: 27,
-      womanBMR: 25.3,
-    },
-    {
-      ageFrom: 18,
-      ageTo: 29,
-      bmr: NaN,
-      manBMR: 24,
-      womanBMR: 22.1,
-    },
-    {
-      ageFrom: 30,
-      ageTo: 49,
-      bmr: NaN,
-      manBMR: 22.3,
-      womanBMR: 21.7,
-    },
-    {
-      ageFrom: 50,
-      ageTo: 69,
-      bmr: NaN,
-      manBMR: 21.5,
-      womanBMR: 20.7,
-    },
-    {
-      ageFrom: 70,
-      ageTo: NaN,
-      bmr: NaN,
-      manBMR: 21.5,
-      womanBMR: 20.7,
-    },
-  ];
-  baseMBIData: IBaseMBIData[] = [
-    {
-      bmiFrom: 2.5,
-      bmiTo: 18.4,
-      bmi: NaN,
-      type: 'TABLE.FITNESS',
-    },
-    {
-      bmiFrom: 18.5,
-      bmiTo: 22.9,
-      bmi: NaN,
-      type: 'TABLE.BALANCE',
-    },
-    {
-      bmiFrom: 23,
-      bmiTo: 24.9,
-      bmi: NaN,
-      type: 'TABLE.OVERWEIGHT',
-    },
-    {
-      bmiFrom: 25,
-      bmiTo: 29.9,
-      bmi: NaN,
-      type: 'TABLE.OBESITY',
-    },
-    {
-      bmiFrom: 20,
-      bmiTo: 50,
-      bmi: NaN,
-      type: 'TABLE.DANGEROUS_OBESITY',
-    },
-  ];
-  baseBodyFatData: IBaseBodyFatData[] = [
-    {
-      indexForManFrom: 3,
-      indexForManTo: 10,
-      indexForWomanFrom: 12,
-      indexForWomanTo: 18,
-      type: 'TABLE.FITNESS',
-    },
-    {
-      indexForManFrom: 10,
-      indexForManTo: 20,
-      indexForWomanFrom: 18,
-      indexForWomanTo: 28,
-      type: 'TABLE.BALANCE',
-    },
-    {
-      indexForManFrom: 20,
-      indexForManTo: 25,
-      indexForWomanFrom: 28,
-      indexForWomanTo: 32,
-      type: 'TABLE.HIGH',
-    },
-    {
-      indexForManFrom: 25,
-      indexForManTo: NaN,
-      indexForWomanFrom: 32,
-      indexForWomanTo: NaN,
-      type: 'TABLE.VERY_HIGH',
-    },
-  ];
-  baseVisceralFatData: IBaseVisceralFatData[] = [
-    {
-      levelVisceralFatFrom: 1,
-      levelVisceralFatTo: 3,
-      type: 'TABLE.GOOD',
-    },
-    {
-      levelVisceralFatFrom: 3,
-      levelVisceralFatTo: 9,
-      type: 'TABLE.HIGH',
-    },
-    {
-      levelVisceralFatFrom: 10,
-      levelVisceralFatTo: 14,
-      type: 'TABLE.DANGER',
-    },
-    {
-      levelVisceralFatFrom: 15,
-      levelVisceralFatTo: 30,
-      type: 'TABLE.VERY_DANGER',
-    },
-  ];
-  baseSkeletalMusclesData: IBaseSkeletalMusclesData[] = [
-    {
-      for: 'TABLE.WOMAN',
-      lowFrom: 5,
-      lowTo: 26,
-      normalFrom: 26,
-      normalTo: 29,
-      goodFrom: 29,
-      goodTo: 31,
-      veryGoodFrom: 31,
-      veryGoodTo: 60,
-    },
-    {
-      for: 'TABLE.MAN',
-      lowFrom: 5,
-      lowTo: 33,
-      normalFrom: 33,
-      normalTo: 37,
-      goodFrom: 37,
-      goodTo: 40,
-      veryGoodFrom: 40,
-      veryGoodTo: 60,
-    },
-  ];
+  baseWinfitOnlineData = this.winfitOnlineService.baseWinfitOnlineData;
 
   visibleIndexWinfitModal: boolean = false;
   visibleWarningAuthModal: boolean = false;
@@ -268,18 +109,18 @@ export class WinfitOnlineComponent implements OnInit {
   }
 
   initForm() {
-    this.infoForm = this.fb.group({
-      age: [null as any, [this.numberValidate]],
-      gender: [null as any, [this.numberValidate]],
-      heightIndex: [null as any, [this.numberValidate]],
-      weightIndex: [null as any, [this.numberValidate]],
-    });
     // this.infoForm = this.fb.group({
-    //   age: [25, [this.numberValidate]],
-    //   gender: [true, [this.numberValidate]],
-    //   heightIndex: [169, [this.numberValidate]],
-    //   weightIndex: [60, [this.numberValidate]],
+    //   age: [null as any, [this.numberValidate]],
+    //   gender: [null as any, [this.numberValidate]],
+    //   heightIndex: [null as any, [this.numberValidate]],
+    //   weightIndex: [null as any, [this.numberValidate]],
     // });
+    this.infoForm = this.fb.group({
+      age: [25, [this.numberValidate]],
+      gender: [true, [this.numberValidate]],
+      heightIndex: [169, [this.numberValidate]],
+      weightIndex: [60, [this.numberValidate]],
+    });
   }
 
   initCustomerForm() {
@@ -333,13 +174,13 @@ export class WinfitOnlineComponent implements OnInit {
 
     let _value = this.customeroForm.value;
     const customerInfo: IFirestoreCustomerWinfitOnline = {
-      userID: this.userService._uuid,
       customerName: _value.name || '',
       customerEmail: _value.email || '',
       customerPhoneNumber: '+84' + (_value.phoneNumber || ''),
     };
+    this.winfitOnlineService.setCustomerInfo = customerInfo;
 
-    this.winfitOnlineService.saveWinfit(customerInfo).subscribe(resp => {
+    this.winfitOnlineService.saveWinfit(this.userService._uuid).subscribe(resp => {
       if (resp) {
         this.onToogleVisibleIndexWinfitModal(false);
         this.onToogleVisibleInputCustomerModal(false);
