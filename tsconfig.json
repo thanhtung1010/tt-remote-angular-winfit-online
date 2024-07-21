@@ -22,11 +22,11 @@
       "ES2022",
       "dom"
     ],
-    "paths": {
-      "tt-library-angular-porfolio": [
-        "../tt-library-angular-porfolio/dist/tt-library-angular-porfolio/"
-      ]
-    }
+    // "paths": {
+    //   "tt-library-angular-porfolio": [
+    //     "../tt-library-angular-porfolio/dist/tt-library-angular-porfolio/"
+    //   ]
+    // }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
