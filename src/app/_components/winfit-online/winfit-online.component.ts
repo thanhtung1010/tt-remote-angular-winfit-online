@@ -1,38 +1,34 @@
+import { CommonModule } from "@angular/common";
 import { Component, OnInit } from '@angular/core';
 import {
-  FormGroup,
-  FormBuilder,
   AbstractControl,
-  ValidationErrors,
+  FormBuilder,
   FormControl,
+  FormGroup,
+  FormsModule, ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
-import {
-  IBaseBodyFatData,
-  IBaseMBIData,
-  IBaseMBRData,
-  IBaseSkeletalMusclesData,
-  IBaseVisceralFatData,
-  UserService,
-  WinfitOnlineService,
-  BaseIndexWinfitModel,
-  CommonService,
-  ROUTE,
-  Helpers,
-  IFirestoreCustomerWinfitOnline,
-} from 'tt-library-angular-porfolio';
-import { AssetsLink } from 'tt-library-angular-porfolio';
+import { TranslateModule } from '@ngx-translate/core';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { TranslateModule } from '@ngx-translate/core';
-import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import {
+  AssetsLink,
+  BaseIndexWinfitModel,
+  CommonService,
+  Helpers,
+  IFirestoreCustomerWinfitOnline,
+  ROUTE,
+  UserService,
+  WinfitOnlineService
+} from 'tt-library-angular-porfolio';
 import { BMRPerAgePipe } from '../../_pipes';
 
 @Component({
@@ -54,6 +50,7 @@ import { BMRPerAgePipe } from '../../_pipes';
     NzModalModule,
     NzTableModule,
     NzDescriptionsModule,
+    NzCollapseModule,
   ]
 })
 export class WinfitOnlineComponent implements OnInit {
@@ -71,6 +68,11 @@ export class WinfitOnlineComponent implements OnInit {
   loading = {
     checkIndexWinfit: false,
     saveWinfitInfo: false,
+  };
+  activeCollapse = {
+    impactBMIBMR: false,
+    impactBMR: false,
+    impactBMI: false,
   };
   indexWinfit: BaseIndexWinfitModel = new BaseIndexWinfitModel(null);
   baseWinfitOnlineData = this.winfitOnlineService.baseWinfitOnlineData;
@@ -109,18 +111,19 @@ export class WinfitOnlineComponent implements OnInit {
   }
 
   initForm() {
-    this.infoForm = this.fb.group({
-      age: [null as any, [this.numberValidate]],
-      gender: [null as any, [this.numberValidate]],
-      heightIndex: [null as any, [this.numberValidate]],
-      weightIndex: [null as any, [this.numberValidate]],
-    });
     // this.infoForm = this.fb.group({
-    //   age: [25, [this.numberValidate]],
-    //   gender: [true, [this.numberValidate]],
-    //   heightIndex: [169, [this.numberValidate]],
-    //   weightIndex: [60, [this.numberValidate]],
+    //   age: [null as any, [this.numberValidate]],
+    //   gender: [null as any, [this.numberValidate]],
+    //   heightIndex: [null as any, [this.numberValidate]],
+    //   weightIndex: [null as any, [this.numberValidate]],
     // });
+    this.infoForm = this.fb.group({
+      age: [25, [this.numberValidate]],
+      gender: [true, [this.numberValidate]],
+      heightIndex: [169, [this.numberValidate]],
+      weightIndex: [60, [this.numberValidate]],
+    });
+    this.onClickCheckIndex();
   }
 
   initCustomerForm() {
@@ -240,6 +243,18 @@ export class WinfitOnlineComponent implements OnInit {
       this.customeroForm.reset();
     }
     this.visibleInputCustomerModal = visible;
+  }
+
+  onToogleActiveImpactBMIBMR(active: boolean) {
+    this.activeCollapse.impactBMIBMR = active;
+  }
+
+  onToogleActiveImpactBMR(active: boolean) {
+    this.activeCollapse.impactBMR = active;
+  }
+
+  onToogleActiveImpactBMI(active: boolean) {
+    this.activeCollapse.impactBMI = active;
   }
 
   goToLogin() {

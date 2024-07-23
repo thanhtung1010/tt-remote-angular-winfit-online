@@ -91,9 +91,37 @@
         </div>
       </section>
 
+      <!-- notice -->
+      <section class="tt-wo-modal-section tt-wo-modal-notice">
+        <label class="tt-wo-modal-notice-title" (click)="onToogleActiveImpactBMIBMR(!activeCollapse.impactBMIBMR)">
+          {{'WINFIT.IMPACT_BMI_BMR' | translate}}
+        </label>
+        <nz-collapse>
+          <nz-collapse-panel [nzActive]="activeCollapse.impactBMIBMR">
+            <ul style="margin: unset;" [innerHTML]="'WINFIT.ELEMENT_IMPACT_BMI_BMR' | translate"></ul>
+          </nz-collapse-panel>
+        </nz-collapse>
+      </section>
+
       <!-- BMR -->
       <section class="tt-wo-modal-section tt-wo-modal-section-bmr">
-        <label class="tt-wo-modal-section-head tt-label">{{('TABLE.EXPLAIN_INDEX_BMR' | translate) | uppercase}}</label>
+        <div style="display: flex; gap: 5px;">
+          <label class="tt-wo-modal-section-head tt-label">{{('TABLE.EXPLAIN_INDEX_BMR' | translate) | uppercase}}</label>
+          {{' - '}}
+          <label class="tt-wo-modal-notice-title" (click)="onToogleActiveImpactBMR(!activeCollapse.impactBMR)">
+            {{'(' + ('WINFIT.NOTICE' | translate) + ')'}}
+          </label>
+        </div>
+
+        <!-- notice bmr -->
+        <section class="tt-wo-modal-notice">
+          <nz-collapse>
+            <nz-collapse-panel [nzActive]="activeCollapse.impactBMR">
+              <ul style="margin: unset;" [innerHTML]="'WINFIT.EXPLAIN_BMR' | translate"></ul>
+            </nz-collapse-panel>
+          </nz-collapse>
+        </section>
+
         <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseWinfitOnlineData.baseMBRData" [nzScroll]="{x: '700px'}">
           <thead>
             <tr>
@@ -118,8 +146,8 @@
             <ng-container *ngFor="let bmr of baseWinfitOnlineData.baseMBRData; let index = index">
               <tr [ngClass]="{'tt-background-green': indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo}">
                 <ng-container *ngIf="index === 0">
-                  <td [rowSpan]="7">
-                    <p>{{indexWinfit.bmr.mifflinStJeor}}</p>
+                  <td [rowSpan]="7" class="tt-background-green">
+                    <p class="tt-bold tt-koho">{{indexWinfit.bmr.mifflinStJeor}}</p>
                   </td>
                 </ng-container>
                 <td [ngClass]="{'tt-bold tt-koho': indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo}">
@@ -131,7 +159,7 @@
                     {{'>= ' + bmr.ageFrom}}
                   </ng-template>
                 </td>
-                <td [ngClass]="{'tt-bold tt-koho': indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo}">
+                <td>
                   <ng-container *ngIf="indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo">
                     <div [innerHTML]="indexWinfit | TTBMRPerAge"></div>
                   </ng-container>
@@ -150,7 +178,23 @@
 
       <!-- BMI -->
       <section class="tt-wo-modal-section tt-wo-modal-section-bmi">
-        <label class="tt-wo-modal-section-head tt-label">{{('TABLE.INDEX_BMI' | translate) | uppercase}}</label>
+        <div style="display: flex; gap: 5px;">
+          <label class="tt-wo-modal-section-head tt-label">{{('TABLE.INDEX_BMI' | translate) | uppercase}}</label>
+          {{' - '}}
+          <label class="tt-wo-modal-notice-title" (click)="onToogleActiveImpactBMI(!activeCollapse.impactBMI)">
+            {{'(' + ('WINFIT.NOTICE' | translate) + ')'}}
+          </label>
+        </div>
+
+        <!-- notice bmi -->
+        <section class="tt-wo-modal-notice">
+          <nz-collapse>
+            <nz-collapse-panel [nzActive]="activeCollapse.impactBMI">
+              <ul style="margin: unset;" [innerHTML]="'WINFIT.EXPLAIN_BMI' | translate"></ul>
+            </nz-collapse-panel>
+          </nz-collapse>
+        </section>
+
         <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseWinfitOnlineData.baseMBIData" [nzScroll]="{x: '450px'}">
           <thead>
             <tr>
@@ -169,8 +213,8 @@
             <ng-container *ngFor="let bmi of baseWinfitOnlineData.baseMBIData; let index = index">
               <tr [ngClass]="{'tt-background-green': indexWinfit.bmi >= bmi.bmiFrom && indexWinfit.bmi <= bmi.bmiTo}">
                 <ng-container *ngIf="index === 0">
-                  <td [rowSpan]="5">
-                    <p>{{indexWinfit.bmi}}</p>
+                  <td [rowSpan]="5" class="tt-background-green">
+                    <p class="tt-bold tt-koho">{{indexWinfit.bmi}}</p>
                   </td>
                 </ng-container>
                 <td [ngClass]="{'tt-bold tt-koho': indexWinfit.bmi >= bmi.bmiFrom && indexWinfit.bmi <= bmi.bmiTo}">

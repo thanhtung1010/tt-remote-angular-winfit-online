@@ -20,10 +20,10 @@ export class BMRPerAgePipe implements PipeTransform {
 
     if (Number.isNaN(_bmr)) {
       _class = 'tt-red';
-      _content = `<p class="${_class}">N/A</p>`;
+      _content = `<p class="tt-bold tt-koho ${_class}">N/A</p>`;
     } else {
       const bmrPerAge: number = +(_bmr / baseInfo.weightIndex).toFixed(2);
-      _content = `<p>${bmrPerAge}</p>`;
+      _content = `<p class="tt-bold tt-koho">${bmrPerAge}</p>`;
     }
 
     return this.santiti.bypassSecurityTrustHtml(_content);
