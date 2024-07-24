@@ -27,9 +27,11 @@ import {
   IFirestoreCustomerWinfitOnline,
   ROUTE,
   UserService,
-  WinfitOnlineService
+  WinfitOnlineService,
+  NaNNumberPipe,
+  IBaseWinfitOnlineData,
+  BMRPerAgePipe,
 } from 'tt-library-angular-porfolio';
-import { BMRPerAgePipe } from '../../_pipes';
 
 @Component({
   selector: 'tt-winfit-online',
@@ -38,6 +40,7 @@ import { BMRPerAgePipe } from '../../_pipes';
   imports: [
     BMRPerAgePipe,
     AssetsLink,
+    NaNNumberPipe,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -59,6 +62,9 @@ export class WinfitOnlineComponent implements OnInit {
     gender: FormControl<boolean | null>;
     heightIndex: FormControl<number | null>;
     weightIndex: FormControl<number | null>;
+    bodyFatIndex: FormControl<number | null>;
+    visceralFatIndex: FormControl<number | null>;
+    skeletalMusclesIndex: FormControl<number | null>;
   }>;
   customeroForm!: FormGroup<{
     name: FormControl<string | null>;
@@ -75,7 +81,7 @@ export class WinfitOnlineComponent implements OnInit {
     impactBMI: false,
   };
   indexWinfit: BaseIndexWinfitModel = new BaseIndexWinfitModel(null);
-  baseWinfitOnlineData = this.winfitOnlineService.baseWinfitOnlineData;
+  baseWinfitOnlineData: IBaseWinfitOnlineData | null = null;
 
   visibleIndexWinfitModal: boolean = false;
   visibleWarningAuthModal: boolean = false;
@@ -108,20 +114,30 @@ export class WinfitOnlineComponent implements OnInit {
     if (this.userService.user.init) {
       this.winfitOnlineService.setUserInfo = this.userService.user;
     }
+
+    this.winfitOnlineService.baseWinfitOnlineData$.subscribe(resp => {
+      this.baseWinfitOnlineData = resp;
+    });
   }
 
   initForm() {
     this.infoForm = this.fb.group({
-      age: [null as any, [this.numberValidate]],
-      gender: [null as any, [this.numberValidate]],
-      heightIndex: [null as any, [this.numberValidate]],
-      weightIndex: [null as any, [this.numberValidate]],
+      age: [NaN as any, [this.numberValidate]],
+      gender: [NaN as any, [this.numberValidate]],
+      heightIndex: [NaN as any, [this.numberValidate]],
+      weightIndex: [NaN as any, [this.numberValidate]],
+      bodyFatIndex: [NaN, []],
+      visceralFatIndex: [NaN, []],
+      skeletalMusclesIndex: [NaN, []],
     });
     // this.infoForm = this.fb.group({
     //   age: [25, [this.numberValidate]],
     //   gender: [true, [this.numberValidate]],
     //   heightIndex: [169, [this.numberValidate]],
-    //   weightIndex: [60, [this.numberValidate]],
+    //   weightIndex: [59.6, [this.numberValidate]],
+    //   bodyFatIndex: [20.7, []],
+    //   visceralFatIndex: [4, []],
+    //   skeletalMusclesIndex: [26.4, []],
     // });
     // this.onClickCheckIndex();
   }

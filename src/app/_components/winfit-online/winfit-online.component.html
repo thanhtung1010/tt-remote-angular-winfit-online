@@ -1,8 +1,8 @@
 <section class="tt-wo">
   <div class="tt-wo-backdrop"></div>
   <section class="tt-wo-content">
+    <div class="tt-wo-content-backdrop"></div>
     <section class="tt-wo-content-wrap">
-      <div class="tt-wo-content-backdrop"></div>
       <section class="tt-wo-top">
         <img loading="lazy" [src]="'logo-winfit' | TTAssetsLink:'svg'" [alt]="'logo-winfit.svg'" style="height: 50px;">
         <img loading="lazy" [src]="'logo-winwin' | TTAssetsLink:'svg'" [alt]="'logo-winwin.svg'" style="height: 50px;">
@@ -35,6 +35,24 @@
             <label class="tt-label tt-required">{{"LABEL.WEIGHT_INPUT_WINFIT" | translate}}</label>
             <input nz-input type="number" formControlName="weightIndex" [placeholder]="'PLACEHOLDER.WEIGHT_INPUT' | translate" />
           </ng-container>
+
+          <!-- bodyFatIndex -->
+          <ng-container *ngIf="infoForm.contains('bodyFatIndex')">
+            <label class="tt-label">{{"TABLE.INDEX_BODY_FAT" | translate}}</label>
+            <input nz-input type="number" formControlName="bodyFatIndex" [placeholder]="'TABLE.INDEX_BODY_FAT' | translate" />
+          </ng-container>
+
+          <!-- visceralFatIndex -->
+          <ng-container *ngIf="infoForm.contains('visceralFatIndex')">
+            <label class="tt-label">{{"TABLE.INDEX_VISCERAL_FAT" | translate}}</label>
+            <input nz-input type="number" formControlName="visceralFatIndex" [placeholder]="'TABLE.INDEX_VISCERAL_FAT' | translate" />
+          </ng-container>
+
+          <!-- skeletalMusclesIndex -->
+          <ng-container *ngIf="infoForm.contains('skeletalMusclesIndex')">
+            <label class="tt-label">{{"TABLE.INDEX_SKELETAL_MUSCLES" | translate}}</label>
+            <input nz-input type="number" formControlName="skeletalMusclesIndex" [placeholder]="'TABLE.INDEX_SKELETAL_MUSCLES' | translate" />
+          </ng-container>
         </form>
       </section>
       <section class="tt-wo-bottom">
@@ -55,317 +73,328 @@
   </section>
 </section>
 
-<nz-modal [nzClassName]="'tt-wo-modal'" [(nzVisible)]="visibleIndexWinfitModal" [nzCloseIcon]="''">
+<nz-modal [nzClassName]="'tt-wo-modal'" [(nzVisible)]="visibleIndexWinfitModal" [nzCloseIcon]="''" [nzMaskClosable]="true"
+  (nzOnCancel)="onToogleVisibleIndexWinfitModal($event)">
   <ng-container *nzModalTitle></ng-container>
 
   <ng-container *nzModalContent>
-    <section class="tt-wo-modal-content">
-      <!-- base info -->
-       <section class="tt-wo-modal-section">
-        <label class="tt-wo-modal-section-head tt-label">{{('TABLE.BASIC_INFO_WINFIT' | translate) | uppercase}}</label>
-        <div class="tt-wo-basic-info">
-          <div class="tt-wo-basic-info-item">
-            <label class="tt-label">{{'TABLE.ABOUT_AGE' | translate}}:</label>
-            <p>{{indexWinfit.age}}</p>
+    <ng-container *ngIf="baseWinfitOnlineData">
+      <section class="tt-wo-modal-content">
+        <!-- base info -->
+         <section class="tt-wo-modal-section">
+          <label class="tt-wo-modal-section-head tt-label">{{('TABLE.BASIC_INFO_WINFIT' | translate) | uppercase}}</label>
+          <div class="tt-wo-basic-info">
+            <div class="tt-wo-basic-info-item">
+              <label class="tt-label">{{'TABLE.ABOUT_AGE' | translate}}:</label>
+              <p>{{indexWinfit.age}}</p>
+            </div>
+
+            <div class="tt-wo-basic-info-item">
+              <label class="tt-label">{{'GENDER.INDEX_WINFIT' | translate}}:</label>
+              <p>{{(indexWinfit.gender ? 'GENDER.MAN_WINFIT' : 'GENDER.WOMAN_WINFIT') | translate}}</p>
+            </div>
+
+            <div class="tt-wo-basic-info-item">
+              <label class="tt-label">{{'TABLE.HEIGHT_WINFIT' | translate}}:</label>
+              <p>{{indexWinfit.heightIndex}}</p>
+            </div>
+
+            <div class="tt-wo-basic-info-item">
+              <label class="tt-label">{{'TABLE.WEIGHT_WINFIT' | translate}}:</label>
+              <p>{{indexWinfit.weightIndex}}</p>
+            </div>
+
+            <div class="tt-wo-basic-info-item">
+              <label class="tt-label">{{'TABLE.WATER_NEEDED_WINFIT' | translate}}:</label>
+              <p>{{indexWinfit.waterNeeded + ' ' + ('TABLE.WATER_WINFIT' | translate)}}</p>
+            </div>
           </div>
+        </section>
 
-          <div class="tt-wo-basic-info-item">
-            <label class="tt-label">{{'GENDER.INDEX_WINFIT' | translate}}:</label>
-            <p>{{(indexWinfit.gender ? 'GENDER.MAN_WINFIT' : 'GENDER.WOMAN_WINFIT') | translate}}</p>
-          </div>
-
-          <div class="tt-wo-basic-info-item">
-            <label class="tt-label">{{'TABLE.HEIGHT_WINFIT' | translate}}:</label>
-            <p>{{indexWinfit.heightIndex}}</p>
-          </div>
-
-          <div class="tt-wo-basic-info-item">
-            <label class="tt-label">{{'TABLE.WEIGHT_WINFIT' | translate}}:</label>
-            <p>{{indexWinfit.weightIndex}}</p>
-          </div>
-
-          <div class="tt-wo-basic-info-item">
-            <label class="tt-label">{{'TABLE.WATER_NEEDED_WINFIT' | translate}}:</label>
-            <p>{{indexWinfit.waterNeeded + ' ' + ('TABLE.WATER_WINFIT' | translate)}}</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- notice -->
-      <section class="tt-wo-modal-section tt-wo-modal-notice">
-        <label class="tt-wo-modal-notice-title" (click)="onToogleActiveImpactBMIBMR(!activeCollapse.impactBMIBMR)">
-          {{'WINFIT.IMPACT_BMI_BMR' | translate}}
-        </label>
-        <nz-collapse>
-          <nz-collapse-panel [nzActive]="activeCollapse.impactBMIBMR">
-            <ul style="margin: unset;" [innerHTML]="'WINFIT.ELEMENT_IMPACT_BMI_BMR' | translate"></ul>
-          </nz-collapse-panel>
-        </nz-collapse>
-      </section>
-
-      <!-- BMR -->
-      <section class="tt-wo-modal-section tt-wo-modal-section-bmr">
-        <div style="display: flex; gap: 5px;">
-          <label class="tt-wo-modal-section-head tt-label">{{('TABLE.EXPLAIN_INDEX_BMR' | translate) | uppercase}}</label>
-          {{' - '}}
-          <label class="tt-wo-modal-notice-title" (click)="onToogleActiveImpactBMR(!activeCollapse.impactBMR)">
-            {{'(' + ('WINFIT.NOTICE' | translate) + ')'}}
+        <!-- notice -->
+        <section class="tt-wo-modal-section tt-wo-modal-notice">
+          <label class="tt-wo-modal-notice-title" (click)="onToogleActiveImpactBMIBMR(!activeCollapse.impactBMIBMR)">
+            {{'WINFIT.IMPACT_BMI_BMR' | translate}}
           </label>
-        </div>
-
-        <!-- notice bmr -->
-        <section class="tt-wo-modal-notice">
           <nz-collapse>
-            <nz-collapse-panel [nzActive]="activeCollapse.impactBMR">
-              <ul style="margin: unset;" [innerHTML]="'WINFIT.EXPLAIN_BMR' | translate"></ul>
+            <nz-collapse-panel [nzActive]="activeCollapse.impactBMIBMR">
+              <ul style="margin: unset;" [innerHTML]="'WINFIT.ELEMENT_IMPACT_BMI_BMR' | translate"></ul>
             </nz-collapse-panel>
           </nz-collapse>
         </section>
 
-        <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseWinfitOnlineData.baseMBRData" [nzScroll]="{x: '700px'}">
-          <thead>
-            <tr>
-              <th [nzWidth]="'100px'">
-                {{ ('TABLE.BMR' | translate) | uppercase }}
-              </th>
-              <th [nzWidth]="'100px'">
-                {{ ('TABLE.ABOUT_AGE' | translate) | uppercase }}
-              </th>
-              <th [nzWidth]="'300px'">
-                {{ ('TABLE.INDEX_BMR' | translate) | uppercase }}
-              </th>
-              <th [nzWidth]="'100px'">
-                {{ ('TABLE.MAN' | translate) | uppercase }}
-              </th>
-              <th [nzWidth]="'100px'">
-                {{ ('TABLE.WOMAN' | translate) | uppercase }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngFor="let bmr of baseWinfitOnlineData.baseMBRData; let index = index">
-              <tr [ngClass]="{'tt-background-green': indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo}">
-                <ng-container *ngIf="index === 0">
-                  <td [rowSpan]="7" class="tt-background-green">
-                    <p class="tt-bold tt-koho">{{indexWinfit.bmr.mifflinStJeor}}</p>
-                  </td>
-                </ng-container>
-                <td [ngClass]="{'tt-bold tt-koho': indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo}">
-                  <ng-container *ngIf="bmr.ageTo; else emptyAgeTo">
-                    {{bmr.ageFrom + ' - ' + bmr.ageTo}}
-                  </ng-container>
+        <!-- BMR -->
+        <section class="tt-wo-modal-section tt-wo-modal-section-bmr">
+          <div style="display: flex; gap: 5px;">
+            <label class="tt-wo-modal-section-head tt-label">{{('TABLE.EXPLAIN_INDEX_BMR' | translate) | uppercase}}</label>
+            {{' - '}}
+            <label class="tt-wo-modal-notice-title" (click)="onToogleActiveImpactBMR(!activeCollapse.impactBMR)">
+              {{'(' + ('WINFIT.NOTICE' | translate) + ')'}}
+            </label>
+          </div>
 
-                  <ng-template #emptyAgeTo>
-                    {{'>= ' + bmr.ageFrom}}
-                  </ng-template>
-                </td>
-                <td>
-                  <ng-container *ngIf="indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo">
-                    <div [innerHTML]="indexWinfit | TTBMRPerAge"></div>
-                  </ng-container>
-                </td>
-                <td [ngClass]="{'tt-bold tt-koho': indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo}">
-                  {{bmr.manBMR}}
-                </td>
-                <td [ngClass]="{'tt-bold tt-koho': indexWinfit.age >= bmr.ageFrom && indexWinfit.age <= bmr.ageTo}">
-                  {{bmr.womanBMR}}
-                </td>
+          <!-- notice bmr -->
+          <section class="tt-wo-modal-notice">
+            <nz-collapse>
+              <nz-collapse-panel [nzActive]="activeCollapse.impactBMR">
+                <ul style="margin: unset;" [innerHTML]="'WINFIT.EXPLAIN_BMR' | translate"></ul>
+              </nz-collapse-panel>
+            </nz-collapse>
+          </section>
+
+          <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseWinfitOnlineData.baseMBRData" [nzScroll]="{x: '700px'}">
+            <thead>
+              <tr>
+                <th [nzWidth]="'100px'">
+                  {{ ('TABLE.BMR' | translate) | uppercase }}
+                </th>
+                <th [nzWidth]="'100px'">
+                  {{ ('TABLE.ABOUT_AGE' | translate) | uppercase }}
+                </th>
+                <th [nzWidth]="'300px'">
+                  {{ ('TABLE.INDEX_BMR' | translate) | uppercase }}
+                </th>
+                <th [nzWidth]="'100px'">
+                  {{ ('TABLE.MAN' | translate) | uppercase }}
+                </th>
+                <th [nzWidth]="'100px'">
+                  {{ ('TABLE.WOMAN' | translate) | uppercase }}
+                </th>
               </tr>
-            </ng-container>
-          </tbody>
-        </nz-table>
-      </section>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let bmr of baseWinfitOnlineData.baseMBRData; let index = index">
+                <tr [ngClass]="{'tt-background-green': bmr.active}">
+                  <ng-container *ngIf="index === 0">
+                    <td [rowSpan]="7" class="tt-background-green">
+                      <div [innerHTML]="indexWinfit | TTBMRPerAge:true"></div>
+                    </td>
+                  </ng-container>
+                  <td [ngClass]="{'tt-bold tt-koho': bmr.active}">
+                    <ng-container *ngIf="bmr.ageTo; else emptyAgeTo">
+                      {{bmr.ageFrom + ' - ' + bmr.ageTo}}
+                    </ng-container>
 
-      <!-- BMI -->
-      <section class="tt-wo-modal-section tt-wo-modal-section-bmi">
-        <div style="display: flex; gap: 5px;">
-          <label class="tt-wo-modal-section-head tt-label">{{('TABLE.INDEX_BMI' | translate) | uppercase}}</label>
-          {{' - '}}
-          <label class="tt-wo-modal-notice-title" (click)="onToogleActiveImpactBMI(!activeCollapse.impactBMI)">
-            {{'(' + ('WINFIT.NOTICE' | translate) + ')'}}
-          </label>
-        </div>
-
-        <!-- notice bmi -->
-        <section class="tt-wo-modal-notice">
-          <nz-collapse>
-            <nz-collapse-panel [nzActive]="activeCollapse.impactBMI">
-              <ul style="margin: unset;" [innerHTML]="'WINFIT.EXPLAIN_BMI' | translate"></ul>
-            </nz-collapse-panel>
-          </nz-collapse>
+                    <ng-template #emptyAgeTo>
+                      {{'>= ' + bmr.ageFrom}}
+                    </ng-template>
+                  </td>
+                  <td>
+                    <ng-container *ngIf="bmr.active">
+                      <div [innerHTML]="indexWinfit | TTBMRPerAge"></div>
+                    </ng-container>
+                  </td>
+                  <td [ngClass]="{'tt-bold tt-koho': bmr.active}">
+                    {{bmr.manBMR}}
+                  </td>
+                  <td [ngClass]="{'tt-bold tt-koho': bmr.active}">
+                    {{bmr.womanBMR}}
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </nz-table>
         </section>
 
-        <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseWinfitOnlineData.baseMBIData" [nzScroll]="{x: '450px'}">
-          <thead>
-            <tr>
-              <th [nzWidth]="'100px'">
-                {{ ('TABLE.BMI' | translate) | uppercase }}
-              </th>
-              <th [nzWidth]="'150px'">
-                {{ ('TABLE.EXPLAIN_BMI' | translate) | uppercase }}
-              </th>
-              <th [nzWidth]="'200px'">
-                {{ ('TABLE.TYPE' | translate) | uppercase }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngFor="let bmi of baseWinfitOnlineData.baseMBIData; let index = index">
-              <tr [ngClass]="{'tt-background-green': indexWinfit.bmi >= bmi.bmiFrom && indexWinfit.bmi <= bmi.bmiTo}">
-                <ng-container *ngIf="index === 0">
-                  <td [rowSpan]="5" class="tt-background-green">
-                    <p class="tt-bold tt-koho">{{indexWinfit.bmi}}</p>
+        <!-- BMI -->
+        <section class="tt-wo-modal-section tt-wo-modal-section-bmi">
+          <div style="display: flex; gap: 5px;">
+            <label class="tt-wo-modal-section-head tt-label">{{('TABLE.INDEX_BMI' | translate) | uppercase}}</label>
+            {{' - '}}
+            <label class="tt-wo-modal-notice-title" (click)="onToogleActiveImpactBMI(!activeCollapse.impactBMI)">
+              {{'(' + ('WINFIT.NOTICE' | translate) + ')'}}
+            </label>
+          </div>
+
+          <!-- notice bmi -->
+          <section class="tt-wo-modal-notice">
+            <nz-collapse>
+              <nz-collapse-panel [nzActive]="activeCollapse.impactBMI">
+                <ul style="margin: unset;" [innerHTML]="'WINFIT.EXPLAIN_BMI' | translate"></ul>
+              </nz-collapse-panel>
+            </nz-collapse>
+          </section>
+
+          <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseWinfitOnlineData.baseMBIData" [nzScroll]="{x: '450px'}">
+            <thead>
+              <tr>
+                <th [nzWidth]="'100px'">
+                  {{ ('TABLE.BMI' | translate) | uppercase }}
+                </th>
+                <th [nzWidth]="'150px'">
+                  {{ ('TABLE.EXPLAIN_BMI' | translate) | uppercase }}
+                </th>
+                <th [nzWidth]="'200px'">
+                  {{ ('TABLE.TYPE' | translate) | uppercase }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let bmi of baseWinfitOnlineData.baseMBIData; let index = index">
+                <tr [ngClass]="{'tt-background-green': bmi.active}">
+                  <ng-container *ngIf="index === 0">
+                    <td [rowSpan]="5" class="tt-background-green">
+                      <div [innerHTML]="indexWinfit.bmi | TTNaNNumber"></div>
+                    </td>
+                  </ng-container>
+                  <td [ngClass]="{'tt-bold tt-koho': bmi.active}">
+                    {{bmi.bmiFrom + ' - ' + bmi.bmiTo}}
                   </td>
-                </ng-container>
-                <td [ngClass]="{'tt-bold tt-koho': indexWinfit.bmi >= bmi.bmiFrom && indexWinfit.bmi <= bmi.bmiTo}">
-                  {{bmi.bmiFrom + ' - ' + bmi.bmiTo}}
-                </td>
-                <td [ngClass]="{'tt-bold tt-koho': indexWinfit.bmi >= bmi.bmiFrom && indexWinfit.bmi <= bmi.bmiTo}">
-                  {{bmi.type | translate}}
-                </td>
-              </tr>
-            </ng-container>
-          </tbody>
-        </nz-table>
-      </section>
+                  <td [ngClass]="{'tt-bold tt-koho': bmi.active}">
+                    {{bmi.type | translate}}
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </nz-table>
+        </section>
 
-      <!-- body fat -->
-      <section class="tt-wo-modal-section tt-wo-modal-section-bodyfat">
-        <label class="tt-wo-modal-section-head tt-label">{{('TABLE.INDEX_BODY_FAT' | translate) | uppercase}}</label>
-        <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseWinfitOnlineData.baseBodyFatData" [nzScroll]="{x: '350px'}">
-          <thead>
-            <tr>
-              <th [nzWidth]="'100px'">
-                {{ ('TABLE.MAN' | translate) | uppercase }}
-              </th>
-              <th [nzWidth]="'100px'">
-                {{ ('TABLE.WOMAN' | translate) | uppercase }}
-              </th>
-              <th [nzWidth]="'150px'">
-                {{ ('TABLE.TYPE' | translate) | uppercase }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngFor="let bdf of baseWinfitOnlineData.baseBodyFatData; let index = index">
+        <!-- body fat -->
+        <section class="tt-wo-modal-section tt-wo-modal-section-bodyfat">
+          <label class="tt-wo-modal-section-head tt-label">{{('TABLE.INDEX_BODY_FAT' | translate) | uppercase}}</label>
+          <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseWinfitOnlineData.baseBodyFatData" [nzScroll]="{x: '400px'}">
+            <thead>
               <tr>
-                <td>
-                  <ng-container *ngIf="bdf.indexForManTo; else emptyManTo">
-                    {{bdf.indexForManFrom + ' - ' + bdf.indexForManTo}}
-                  </ng-container>
-
-                  <ng-template #emptyManTo>
-                    {{'>= ' + bdf.indexForManFrom}}
-                  </ng-template>
-                </td>
-                <td>
-                  <ng-container *ngIf="bdf.indexForWomanTo; else emptyManTo">
-                    {{bdf.indexForWomanFrom + ' - ' + bdf.indexForWomanTo}}
-                  </ng-container>
-
-                  <ng-template #emptyManTo>
-                    {{'>= ' + bdf.indexForWomanFrom}}
-                  </ng-template>
-                </td>
-                <td>
-                  {{bdf.type | translate}}
-                </td>
+                <th [nzWidth]="'50px'"></th>
+                <th [nzWidth]="'100px'">
+                  {{ ('TABLE.MAN' | translate) | uppercase }}
+                </th>
+                <th [nzWidth]="'100px'">
+                  {{ ('TABLE.WOMAN' | translate) | uppercase }}
+                </th>
+                <th [nzWidth]="'150px'">
+                  {{ ('TABLE.TYPE' | translate) | uppercase }}
+                </th>
               </tr>
-            </ng-container>
-          </tbody>
-        </nz-table>
-      </section>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let bdf of baseWinfitOnlineData.baseBodyFatData; let index = index">
+                <tr [ngClass]="{'tt-background-green': bdf.active}">
+                  <ng-container *ngIf="index === 0">
+                    <td class="tt-background-green" [rowSpan]="4">
+                      <div [innerHTML]="indexWinfit.bodyFatIndex | TTNaNNumber"></div>
+                    </td>
+                  </ng-container>
+                  <td [ngClass]="{'tt-bold tt-koho': bdf.active && indexWinfit.gender}">
+                    <ng-container *ngIf="bdf.indexForManTo; else emptyManTo">
+                      {{bdf.indexForManFrom + ' - ' + bdf.indexForManTo}}
+                    </ng-container>
 
-      <!-- visceral fat -->
-      <section class="tt-wo-modal-section tt-wo-modal-section-visceralfat">
-        <label class="tt-wo-modal-section-head tt-label">{{('TABLE.INDEX_VISCERAL_FAT' | translate) | uppercase}}</label>
-        <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseWinfitOnlineData.baseVisceralFatData" [nzScroll]="{x: '350px'}">
-          <thead>
-            <tr>
-              <th [nzWidth]="'200px'">
-                {{ ('TABLE.VISCERAL_FAT_LEVEL' | translate) | uppercase }}
-              </th>
-              <th [nzWidth]="'150px'">
-                {{ ('TABLE.TYPE' | translate) | uppercase }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngFor="let bvf of baseWinfitOnlineData.baseVisceralFatData; let index = index">
+                    <ng-template #emptyManTo>
+                      {{'>= ' + bdf.indexForManFrom}}
+                    </ng-template>
+                  </td>
+                  <td [ngClass]="{'tt-bold tt-koho': bdf.active && !indexWinfit.gender}">
+                    <ng-container *ngIf="bdf.indexForWomanTo; else emptyManTo">
+                      {{bdf.indexForWomanFrom + ' - ' + bdf.indexForWomanTo}}
+                    </ng-container>
+
+                    <ng-template #emptyManTo>
+                      {{'>= ' + bdf.indexForWomanFrom}}
+                    </ng-template>
+                  </td>
+                  <td [ngClass]="{'tt-bold tt-koho': bdf.active}">
+                    {{bdf.type | translate}}
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </nz-table>
+        </section>
+
+        <!-- visceral fat -->
+        <section class="tt-wo-modal-section tt-wo-modal-section-visceralfat">
+          <label class="tt-wo-modal-section-head tt-label">{{('TABLE.INDEX_VISCERAL_FAT' | translate) | uppercase}}</label>
+          <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseWinfitOnlineData.baseVisceralFatData" [nzScroll]="{x: '400px'}">
+            <thead>
               <tr>
-                <td>
-                  <ng-container *ngIf="bvf.levelVisceralFatTo; else emptyManTo">
-                    {{bvf.levelVisceralFatFrom + ' - ' + bvf.levelVisceralFatTo}}
+                <th [nzWidth]="'50px'"></th>
+                <th [nzWidth]="'200px'">
+                  {{ ('TABLE.VISCERAL_FAT_LEVEL' | translate) | uppercase }}
+                </th>
+                <th [nzWidth]="'150px'">
+                  {{ ('TABLE.TYPE' | translate) | uppercase }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let bvf of baseWinfitOnlineData.baseVisceralFatData; let index = index">
+                <tr [ngClass]="{'tt-background-green': bvf.active}">
+                  <ng-container *ngIf="index === 0">
+                    <td class="tt-background-green" [rowSpan]="4">
+                      <div [innerHTML]="indexWinfit.visceralFatIndex | TTNaNNumber"></div>
+                    </td>
                   </ng-container>
+                  <td [ngClass]="{'tt-bold tt-koho': bvf.active}">
+                    <ng-container *ngIf="bvf.levelVisceralFatTo; else emptyManTo">
+                      {{bvf.levelVisceralFatFrom + ' - ' + bvf.levelVisceralFatTo}}
+                    </ng-container>
 
-                  <ng-template #emptyManTo>
-                    {{'>= ' + bvf.levelVisceralFatFrom}}
-                  </ng-template>
-                </td>
-                <td>
-                  {{bvf.type | translate}}
-                </td>
-              </tr>
-            </ng-container>
-          </tbody>
-        </nz-table>
-      </section>
+                    <ng-template #emptyManTo>
+                      {{'>= ' + bvf.levelVisceralFatFrom}}
+                    </ng-template>
+                  </td>
+                  <td [ngClass]="{'tt-bold tt-koho': bvf.active}">
+                    {{bvf.type | translate}}
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </nz-table>
+        </section>
 
-      <!-- skeletal muscles -->
-      <section class="tt-wo-modal-section tt-wo-modal-section-skeletalmescles">
-        <label class="tt-label">{{('TABLE.INDEX_SKELETAL_MUSCLES' | translate) | uppercase}}</label>
-        <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseWinfitOnlineData.baseSkeletalMusclesData" [nzScroll]="{x: '600px'}">
-          <thead>
-            <tr>
-              <th [nzWidth]="'100px'"></th>
-              <th [nzWidth]="'100px'">
-                {{ ('TABLE.LOW' | translate) | uppercase }}
-              </th>
-              <th [nzWidth]="'150px'">
-                {{ ('TABLE.NORMAL' | translate) | uppercase }}
-              </th>
-              <th [nzWidth]="'100px'">
-                {{ ('TABLE.GOOD' | translate) | uppercase }}
-              </th>
-              <th [nzWidth]="'150px'">
-                {{ ('TABLE.VERY_GOOD' | translate) | uppercase }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngFor="let bsm of baseWinfitOnlineData.baseSkeletalMusclesData; let index = index">
+        <!-- skeletal muscles -->
+        <section class="tt-wo-modal-section tt-wo-modal-section-skeletalmescles">
+          <label class="tt-wo-modal-section-head tt-label">{{('TABLE.INDEX_SKELETAL_MUSCLES' | translate) | uppercase}}</label>
+          <nz-table [nzShowPagination]="false" [nzSize]="'small'" [nzData]="baseWinfitOnlineData.baseSkeletalMusclesData" [nzScroll]="{x: '400px'}">
+            <thead>
               <tr>
-                <td>
-                  {{bsm.for | translate}}
-                </td>
-                <td>
-                  {{bsm.lowFrom + ' - ' + bsm.lowTo}}
-                </td>
-                <td>
-                  {{bsm.normalFrom + ' - ' + bsm.normalTo}}
-                </td>
-                <td>
-                  {{bsm.goodFrom + ' - ' + bsm.goodTo}}
-                </td>
-                <td>
-                  {{bsm.veryGoodFrom + ' - ' + bsm.veryGoodTo}}
-                </td>
+                <th [nzWidth]="'50px'"></th>
+                <th [nzWidth]="'100px'">
+                  {{ ('TABLE.MAN' | translate) | uppercase }}
+                </th>
+                <th [nzWidth]="'100px'">
+                  {{ ('TABLE.WOMAN' | translate) | uppercase }}
+                </th>
+                <th [nzWidth]="'150px'">
+                  {{ ('TABLE.TYPE' | translate) | uppercase }}
+                </th>
               </tr>
-            </ng-container>
-          </tbody>
-        </nz-table>
-      </section>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let bsm of baseWinfitOnlineData.baseSkeletalMusclesData; let index = index">
+                <tr [ngClass]="{'tt-background-green': bsm.active}">
+                  <ng-container *ngIf="index === 0">
+                    <td class="tt-background-green" [rowSpan]="4">
+                      <div [innerHTML]="indexWinfit.skeletalMusclesIndex | TTNaNNumber"></div>
+                    </td>
+                  </ng-container>
+                  <td [ngClass]="{'tt-bold tt-koho': bsm.active && indexWinfit.gender}">
+                    {{bsm.manFrom + ' - ' + bsm.manTo}}
+                  </td>
+                  <td [ngClass]="{'tt-bold tt-koho': bsm.active && !indexWinfit.gender}">
+                    {{bsm.womanFrom + ' - ' + bsm.womanTo}}
+                  </td>
+                  <td [ngClass]="{'tt-bold tt-koho': bsm.active}">
+                    {{bsm.type | translate}}
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </nz-table>
+        </section>
 
-      <!-- fotter -->
-       <section class="tt-wo-modal-section tt-wo-modal-section-footer">
-          <button nz-button nzType="default" nzSize="default" nzShape="round" (click)="onToogleVisibleIndexWinfitModal(false)">
-            {{'BUTTON.CANCEL_WINFIT' | translate}}
-          </button>
-          <button nz-button nzType="primary" nzSize="default" nzShape="round" (click)="onClickSave()">
-            {{'BUTTON.SAVE_WINFIT' | translate}}
-          </button>
-       </section>
-    </section>
+        <!-- fotter -->
+         <section class="tt-wo-modal-section tt-wo-modal-section-footer">
+            <button nz-button nzType="default" nzSize="default" nzShape="round" (click)="onToogleVisibleIndexWinfitModal(false)">
+              {{'BUTTON.CANCEL_WINFIT' | translate}}
+            </button>
+            <button nz-button nzType="primary" nzSize="default" nzShape="round" (click)="onClickSave()">
+              {{'BUTTON.SAVE_WINFIT' | translate}}
+            </button>
+         </section>
+      </section>
+    </ng-container>
   </ng-container>
 
   <ng-container *nzModalFooter></ng-container>
